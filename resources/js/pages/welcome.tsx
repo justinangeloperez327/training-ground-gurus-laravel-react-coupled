@@ -32,8 +32,15 @@ export default function Welcome({ jobs }: { jobs: Job[] }) {
                                 </ItemDescription>
                             </ItemContent>
                             <ItemActions>
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href={`/jobs/${job.id}/apply`}>
+                                <Button
+                                    variant="outline"
+                                    type="button"
+                                    size="sm"
+                                    asChild
+                                >
+                                    <Link
+                                        href={`/applications/create?job_id=${job.id}`}
+                                    >
                                         Apply
                                     </Link>
                                 </Button>

@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateJobListingRequest;
 use App\Http\Resources\JobResource;
 use App\Models\JobListing;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class JobListingController extends Controller
@@ -17,14 +18,40 @@ class JobListingController extends Controller
      */
     public function index(Request $request)
     {
-        $jobs = JobListing::query()
+        if ($request->user() && $request->user()->role == 'candidate') {
+            $jobs = JobListing::query()
+                ->when($request->input('search'), function ($query, $search) {
+                    $query->where('title', 'like', '%'.$search.'%')
+                        ->orWhere('description', 'like', '%'.$search.'%')
+                        ->orWhere('location', 'like', '%'.$search.'%');
+                })
+                ->when($request->input('filter'), function ($query, $filter) {
+                    if ($filter === 'applied') {
+                        $query->whereHas('applications', function ($q) {
+                            $q->where('applicant_id', Auth::id());
+                        });
+                    }
+                })
+                ->with('company')
+                ->paginate(10);
+
+            return Inertia::render('jobs/candidate-index', [
+                'jobs' => JobResource::collection($jobs),
+            ]);
+        }
+
+        $jobs = JobListing::whereHas('company', function ($query) {
+            if (Auth::user()->role === 'employer') {
+                $query->where('user_id', Auth::id());
+            }
+        })
             ->when($request->input('search'), function ($query, $search) {
                 $query->where('title', 'like', '%'.$search.'%')
                     ->orWhere('description', 'like', '%'.$search.'%')
                     ->orWhere('location', 'like', '%'.$search.'%');
             })
             ->with('company')
-            ->get();
+            ->paginate(10);
 
         return Inertia::render('jobs/index', [
             'jobs' => JobResource::collection($jobs),
@@ -97,29 +124,5 @@ class JobListingController extends Controller
         $job->delete();
 
         return to_route('jobs.index');
-    }
-
-    public function applyPage(JobListing $job)
-    {
-        return Inertia::render('jobs/apply', [
-            'job' => new JobResource($job->load('company')),
-        ]);
-    }
-
-    public function applySubmit(Request $request, JobListing $job)
-    {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
-            'resume' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:2048'],
-        ]);
-
-        // Handle the resume file upload
-        $resumePath = $request->file('resume')->store('resumes', 'public');
-
-        // Here you would typically save the application to the database
-        // For this example, we'll just return a success message
-
-        return to_route('jobs.index')->with('success', 'Application submitted successfully!');
     }
 }

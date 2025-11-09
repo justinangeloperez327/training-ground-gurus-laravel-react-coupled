@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\JobListing;
 use App\Models\User;
+use App\Models\Company;
+use App\Models\JobListing;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // User::factory(1)->create();
 
         // User::firstOrCreate(
         //     ['email' => 'test@example.com'],
@@ -25,6 +27,18 @@ class DatabaseSeeder extends Seeder
         //     ]
         // );
 
-        JobListing::factory(50)->create();
+        // JobListing::factory(50)->create();
+
+        // Company::factory(10)->create()->each(function ($company) {
+        //     JobListing::factory(5)->create([
+        //         'company_id' => $company->id,
+        //     ]);
+        // });
+
+        // DB::table('users')->update([
+        //     'two_factor_secret' => null,
+        //     'two_factor_recovery_codes' => null,
+        //     'two_factor_confirmed_at' => null,
+        // ]);
     }
 }

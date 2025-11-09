@@ -20,7 +20,7 @@ class CompanyFactory extends Factory
             'name' => $this->faker->company(),
             'address' => $this->faker->address(),
             'website' => $this->faker->url(),
-            'user_id' => \App\Models\User::factory(),
+            'user_id' => \App\Models\User::factory()->withoutTwoFactor(),
         ];
     }
 }

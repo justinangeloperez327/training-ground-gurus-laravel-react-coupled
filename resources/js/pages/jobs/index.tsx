@@ -1,6 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+} from '@/components/ui/pagination';
+import {
     Table,
     TableBody,
     TableCaption,
@@ -21,11 +27,26 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface Props {
-    jobs: Job[];
+interface Link {
+    url: string | null;
+    label: string | number;
+    active: boolean;
 }
 
-export default function JobsIndex({ jobs }: Props) {
+interface JobsProps {
+    jobs: {
+        data: Job[];
+        links: Link;
+        meta: {
+            current_page: number;
+            from: number;
+            last_page: number;
+            links: Link[];
+        };
+    };
+}
+
+export default function JobsIndex({ jobs }: JobsProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Jobs" />
@@ -75,7 +96,7 @@ export default function JobsIndex({ jobs }: Props) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {jobs.map((job) => (
+                        {jobs.data.map((job) => (
                             <TableRow key={job.id}>
                                 <TableCell>{job.id}</TableCell>
                                 <TableCell>{job.title}</TableCell>
@@ -128,6 +149,23 @@ export default function JobsIndex({ jobs }: Props) {
                     </TableBody>
                 </Table>
             </div>
+            <Pagination>
+                <PaginationContent>
+                    {jobs.meta.links.map((link: Link, index: number) => (
+                        <PaginationItem key={index} disabled={!link.url}>
+                            <PaginationLink
+                                href={link.url || '#'}
+                                aria-current={link.active ? 'page' : undefined}
+                                isActive={link.active}
+                            >
+                                {link.label
+                                    .toString()
+                                    .replace(/&laquo;|&raquo;/g, '')}
+                            </PaginationLink>
+                        </PaginationItem>
+                    ))}
+                </PaginationContent>
+            </Pagination>
         </AppLayout>
     );
 }

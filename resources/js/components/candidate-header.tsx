@@ -30,6 +30,7 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import { cn, isSameUrl, resolveUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
+import applications from '@/routes/applications';
 import jobs from '@/routes/jobs';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
@@ -41,6 +42,11 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Jobs',
         href: jobs.index().url,
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Applications',
+        href: applications.index().url,
         icon: LayoutGrid,
     },
 ];

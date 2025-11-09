@@ -60,3 +60,11 @@ export interface Company {
     website?: string;
     user: User;
 }
+
+export interface Application {
+    id: number;
+    resumePath: string;
+    coverLetter?: string;
+    jobListing: Job;
+    applicant: User;
+}

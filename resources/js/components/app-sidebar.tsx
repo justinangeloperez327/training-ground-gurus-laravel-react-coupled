@@ -10,6 +10,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import applications from '@/routes/applications';
 import jobs from '@/routes/jobs';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -25,6 +26,11 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Jobs',
         href: jobs.index(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Applications',
+        href: applications.index(),
         icon: LayoutGrid,
     },
 ];
